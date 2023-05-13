@@ -1,3 +1,4 @@
+import { AuthContextProvider } from '@contexts/AuthContext';
 import { Karla_400Regular, Karla_700Bold } from '@expo-google-fonts/karla';
 import { Routes } from '@routes/index';
 import * as Font from 'expo-font';
@@ -74,14 +75,16 @@ export default function App() {
         backgroundColor="transparent"
         translucent
       />
-      <View
-        onLayout={onLayoutRootView}
-        style={{
-          flex: 1,
-        }}
-      >
-        <Routes />
-      </View>
+      <AuthContextProvider>
+        <View
+          onLayout={onLayoutRootView}
+          style={{
+            flex: 1,
+          }}
+        >
+          <Routes />
+        </View>
+      </AuthContextProvider>
     </NativeBaseProvider>
   );
 }

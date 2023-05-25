@@ -77,6 +77,12 @@ yarn add -D eslint prettier eslint-config-prettier eslint-plugin-react @typescri
 
 ### Adição de recursos na aplicação
 
+[Manter a SplashScreen até leitura das fontes - expo-splash-screen](https://docs.expo.dev/versions/latest/sdk/splash-screen/)
+```bash
+npx expo install expo-splash-screen
+```
+
+
 - [Adição de fontes Google](https://docs.expo.dev/guides/using-custom-fonts/#using-a-google-font)
 ```bash
 npx expo install expo-font @expo-google-fonts/karla
@@ -172,18 +178,35 @@ npx expo install expo-file-system
 yarn add @hookform/resolvers yup
 ```
 
+[Checkbox de formulários - Bouncy Checkbox](https://github.com/WrathChaos/react-native-bouncy-checkbox)
+```bash
+yarn add react-native-bouncy-checkbox
+```
+
+[Inclusão de máscaras em compos de formulário - react-native-mask-text](https://github.com/akinncar/react-native-mask-text)
+```bash
+yarn add react-native-mask-text
+```
+
+[~~~Exibição de imagem em carrousel - react-native-reanimated-carousel~~~](https://github.com/dohooo/react-native-reanimated-carousel)
+Este pacote de carrousel tem como dependência os seguintes (instalação via expo):
+ - react-native-gesture-handler
+ - react-native-reanimated
+```bash
+#yarn add react-native-reanimated-carousel
+#npx expo install react-native-gesture-handler
+#npx expo install react-native-reanimated
+```
+
+[Criação de chaves para objetos JSON - react-native-uuid](https://github.com/eugenehp/react-native-uuid)
+```bash
+yarn add react-native-uuid
+```
+
+
+
 
 ---------------------- Bibliotecas não utilizadas ainda ----------------------
-
-
-
-
-
-
-[Manter a SplashScreen até leitura das fontes - expo-splash-screen](https://docs.expo.dev/versions/latest/sdk/splash-screen/)
-```bash
-npx expo install expo-splash-screen
-```
 
 [Manipulação de data - date-fns](https://date-fns.org/docs/Getting-Started#installation)
 ```bash

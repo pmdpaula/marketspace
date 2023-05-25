@@ -247,9 +247,11 @@ export const SignUp = () => {
             name="name"
             render={({ field: { onChange, value } }) => (
               <Input
-                placeholder="Nome"
-                onChangeText={onChange}
                 value={value}
+                onChangeText={onChange}
+                placeholder="Nome"
+                isRequired
+                w="100%"
                 errorMessage={errors.name?.message}
                 onTextInput={() => setUserPhotoName(value)}
               />
@@ -261,9 +263,11 @@ export const SignUp = () => {
             name="email"
             render={({ field: { onChange, value } }) => (
               <Input
-                placeholder="E-mail"
-                onChangeText={onChange}
                 value={value}
+                onChangeText={onChange}
+                placeholder="E-mail"
+                isRequired
+                w="100%"
                 errorMessage={errors.email?.message}
               />
             )}
@@ -274,9 +278,11 @@ export const SignUp = () => {
             name="tel"
             render={({ field: { onChange, value } }) => (
               <Input
-                placeholder="Telefone"
-                onChangeText={onChange}
                 value={value}
+                onChangeText={onChange}
+                placeholder="Telefone"
+                isRequired
+                w="100%"
                 errorMessage={errors.tel?.message}
               />
             )}
@@ -287,10 +293,12 @@ export const SignUp = () => {
             name="password"
             render={({ field: { onChange, value } }) => (
               <Input
-                placeholder="Senha"
-                mode="password"
-                onChangeText={onChange}
                 value={value}
+                onChangeText={onChange}
+                placeholder="Senha"
+                isRequired
+                w="100%"
+                mode="password"
                 errorMessage={errors.password?.message}
               />
             )}
@@ -301,10 +309,12 @@ export const SignUp = () => {
             name="passwordConfirm"
             render={({ field: { onChange, value } }) => (
               <Input
-                placeholder="Confirmar senha"
-                mode="password"
-                onChangeText={onChange}
                 value={value}
+                onChangeText={onChange}
+                placeholder="Confirmar senha"
+                isRequired
+                w="100%"
+                mode="password"
                 errorMessage={errors.passwordConfirm?.message}
               />
             )}

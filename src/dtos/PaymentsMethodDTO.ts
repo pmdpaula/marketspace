@@ -1,1 +1,1 @@
-export type ProductPaymentsMethod = 'pix' | 'card' | 'boleto' | 'cash' | 'deposit';
+export type PaymentMethodsDTO = 'pix' | 'card' | 'boleto' | 'cash' | 'deposit';

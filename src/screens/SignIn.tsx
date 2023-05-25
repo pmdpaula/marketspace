@@ -114,9 +114,11 @@ export const SignIn = () => {
             name="email"
             render={({ field: { onChange, value } }) => (
               <Input
-                placeholder="E-mail"
                 value={value}
                 onChangeText={onChange}
+                placeholder="E-mail"
+                isRequired
+                w="100%"
                 keyboardType="email-address"
                 autoCapitalize="none"
                 errorMessage={errors.email?.message}
@@ -129,11 +131,13 @@ export const SignIn = () => {
             name="password"
             render={({ field: { onChange, value } }) => (
               <Input
+                value={value}
+                onChangeText={onChange}
                 placeholder="Senha"
+                isRequired
+                w="100%"
                 mode="password"
                 secureTextEntry
-                onChangeText={onChange}
-                value={value}
                 errorMessage={errors.password?.message}
                 onSubmitEditing={handleSubmit(handleSignIn)}
                 returnKeyType="send"

@@ -1,110 +1,47 @@
-// import { ExerciseDTO } from '@dtos/ExerciseDTO';
+import { FullNewAdDTO } from '@dtos/NewAdDTO';
+import { ProductDTO } from '@dtos/ProductDTO';
 import {
-  BottomTabNavigationProp,
-  createBottomTabNavigator,
-} from '@react-navigation/bottom-tabs';
-import { useTheme } from 'native-base';
-import { House, Tag } from 'phosphor-react-native';
-
-import { Platform } from 'react-native';
+  NativeStackNavigationProp,
+  createNativeStackNavigator,
+} from '@react-navigation/native-stack';
 
 import { AdDetails } from '@screens/AdDetails';
-import { Home } from '@screens/Home';
-import { MyAds } from '@screens/MyAds';
 import { NewAd } from '@screens/NewAd';
-import { PreAd } from '@screens/PreAd';
+import { PreviewNewAd } from '@screens/PreviewNewAd';
 
-// import ExerciseSvg from '@assets/exercise.svg';
-// import HistorySvg from '@assets/history.svg';
-// import HomeSvg from '@assets/home.svg';
-// import ProfileSvg from '@assets/profile.svg';
+import { TabRoutes } from './tabs.routes';
 
 type AppRoutesProps = {
-  home: undefined;
-  myAds: undefined;
+  // home: undefined;
+  // myAds: undefined;
+  appHome: undefined;
   newAd: undefined;
-  adDetails: undefined;
-  preAd: undefined;
+  adDetails: { product: ProductDTO };
+  previewNewAd: { fullNewAd: FullNewAdDTO };
 };
 
-export type AppNavigatorRoutesProps = BottomTabNavigationProp<AppRoutesProps>;
+export type AppNavigatorRoutesProps = NativeStackNavigationProp<AppRoutesProps>;
 
-const { Navigator, Screen } = createBottomTabNavigator<AppRoutesProps>();
+const { Navigator, Screen } = createNativeStackNavigator<AppRoutesProps>();
 
 export const AppRoutes = () => {
-  const { colors, sizes } = useTheme();
-
-  const iconSize = sizes[6];
-
   return (
-    <Navigator
-      screenOptions={{
-        headerShown: false,
-        tabBarShowLabel: false,
-        tabBarActiveTintColor: colors.gray[600],
-        tabBarInactiveTintColor: colors.gray[400],
-        tabBarStyle: {
-          backgroundColor: colors.gray[100],
-          borderTopWidth: 0,
-          height: Platform.OS === 'android' ? 'auto' : 96,
-          paddingBottom: sizes[10],
-          paddingTop: sizes[8],
-        },
-      }}
-    >
+    <Navigator screenOptions={{ headerShown: false }}>
       <Screen
-        name="home"
-        component={Home}
-        options={{
-          tabBarIcon: ({ color, focused }) => (
-            <House
-              color={color}
-              size={iconSize}
-              weight={focused ? 'bold' : 'regular'}
-            />
-          ),
-        }}
+        name="appHome"
+        component={TabRoutes}
       />
-      <Screen
-        name="myAds"
-        component={MyAds}
-        options={{
-          tabBarIcon: ({ color, focused }) => (
-            <Tag
-              color={color}
-              size={iconSize}
-              weight={focused ? 'bold' : 'regular'}
-            />
-          ),
-        }}
-      />
-      {/* <Screen
-        name="profile"
-        component={Profile}
-        options={{
-          tabBarIcon: ({ color }) => (
-            <ProfileSvg
-              width={iconSize}
-              height={iconSize}
-              fill={color}
-            />
-          ),
-        }}
-      /> */}
       <Screen
         name="newAd"
         component={NewAd}
-        options={{ tabBarButton: () => null }}
       />
       <Screen
         name="adDetails"
         component={AdDetails}
-        options={{ tabBarButton: () => null }}
       />
       <Screen
-        name="preAd"
-        component={PreAd}
-        options={{ tabBarButton: () => null }}
+        name="previewNewAd"
+        component={PreviewNewAd}
       />
     </Navigator>
   );

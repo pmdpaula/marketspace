@@ -1,5 +1,8 @@
+import { ProductDTO } from '@dtos/ProductDTO';
 import { UserDTO } from '@dtos/UserDTO';
 import api from '@services/api';
+import { AppError } from '@utils/AppError';
+import { useToast } from 'native-base';
 
 import { ReactNode, createContext, useEffect, useState } from 'react';
 
@@ -16,6 +19,9 @@ export type AuthContextDataProps = {
   signIn: (email: string, password: string) => Promise<void>;
   signOut: () => Promise<void>;
   isLoadingUserStorageData: boolean;
+  userAds: ProductDTO[];
+  setUserAds: (userAds: ProductDTO[]) => void;
+  isLoadingUserAds: boolean;
 };
 
 type AuthContextProviderProps = {
@@ -29,6 +35,10 @@ export const AuthContext = createContext<AuthContextDataProps>(
 export const AuthContextProvider = ({ children }: AuthContextProviderProps) => {
   const [user, setUser] = useState<UserDTO>({} as UserDTO);
   const [isLoadingUserStorageData, setIsLoadingUserStorageData] = useState(true);
+  const [userAds, setUserAds] = useState<ProductDTO[]>([]);
+  const [isLoadingUserAds, setIsLoadingUserAds] = useState(true);
+
+  const toast = useToast();
 
   async function updateUserAndToken(userData: UserDTO, token: string) {
     api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
@@ -92,8 +102,33 @@ export const AuthContextProvider = ({ children }: AuthContextProviderProps) => {
     setIsLoadingUserStorageData(false);
   }
 
+  async function getUserAdsData() {
+    setIsLoadingUserAds(true);
+
+    try {
+      const response = await api.get('/users/products');
+
+      setUserAds(response.data);
+    } catch (error) {
+      const isAppError = error instanceof AppError;
+      const title = isAppError
+        ? error.message
+        : 'Erro ao ler dados de anúncio do usuário. Reinicie o aplicativo.';
+
+      toast.show({
+        title,
+        duration: 5000,
+        placement: 'top',
+        bg: 'red.500',
+      });
+    } finally {
+      setIsLoadingUserAds(false);
+    }
+  }
+
   useEffect(() => {
     loadUserData();
+    getUserAdsData();
   }, []);
 
   useEffect(() => {
@@ -112,6 +147,9 @@ export const AuthContextProvider = ({ children }: AuthContextProviderProps) => {
         signIn,
         signOut,
         isLoadingUserStorageData,
+        userAds,
+        setUserAds,
+        isLoadingUserAds,
       }}
     >
       {children}

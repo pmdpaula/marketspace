@@ -1,32 +1,28 @@
 import { ProductDTO } from '@dtos/ProductDTO';
 import { useNavigation } from '@react-navigation/native';
 import { AppNavigatorRoutesProps } from '@routes/app.routes';
-import { Box, HStack, Image, Text, VStack, useTheme } from 'native-base';
+import { Badge, Box, HStack, Image, Text, VStack } from 'native-base';
 
-import { ImageBackground, TouchableOpacity } from 'react-native';
+import { ImageBackground, Pressable } from 'react-native';
 
 type AdCardProps = {
   data: ProductDTO;
 };
 
 export const AdCard = ({ data }: AdCardProps) => {
-  const { colors } = useTheme();
   const { navigate } = useNavigation<AppNavigatorRoutesProps>();
 
   function goToAdDetails() {
-    navigate('adDetails');
+    navigate('adDetails', { product: data });
   }
 
   return (
-    <TouchableOpacity
-      activeOpacity={0.7}
-      onPress={goToAdDetails}
+    <VStack
+      borderTopRadius={8}
+      mb={6}
+      w="46%"
     >
-      <VStack
-        borderRadius={8}
-        w="46%"
-        mb={6}
-      >
+      <Pressable onPress={goToAdDetails}>
         <Box
           rounded="md"
           overflow="hidden"
@@ -54,7 +50,7 @@ export const AdCard = ({ data }: AdCardProps) => {
                 borderColor="white"
               />
 
-              <Box
+              <Badge
                 rounded="full"
                 // bg="gray.2"
                 py={0.5}
@@ -62,7 +58,7 @@ export const AdCard = ({ data }: AdCardProps) => {
                 bg={data.is_new ? 'primary.400' : 'gray.2'}
               >
                 <Text color="white">{data.is_new ? 'NOVO' : 'USADO'}</Text>
-              </Box>
+              </Badge>
             </HStack>
           </ImageBackground>
         </Box>
@@ -71,30 +67,28 @@ export const AdCard = ({ data }: AdCardProps) => {
           fontFamily="body"
           color="gray.2"
           fontSize={14}
-          mt={2}
+          mt={1}
         >
           {data.name}
         </Text>
 
         <Text
           fontFamily="heading"
-          color="gray.500"
+          color="gray.1"
           fontSize="xs"
-          fontWeight="bold"
         >
           R${' '}
           <Text
             fontFamily="heading"
-            color="gray.500"
-            fontSize="md"
-            fontWeight="bold"
+            color="gray.1"
+            fontSize="lg"
           >
             {data.price.toLocaleString('pt-BR', {
               minimumFractionDigits: 2,
             })}
           </Text>
         </Text>
-      </VStack>
-    </TouchableOpacity>
+      </Pressable>
+    </VStack>
   );
 };

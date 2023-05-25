@@ -2,12 +2,13 @@ import { useAuth } from '@hooks/useAuth';
 import { DefaultTheme, NavigationContainer } from '@react-navigation/native';
 import { Box, useTheme } from 'native-base';
 
-import { useState } from 'react';
-
+// import { useState } from 'react';
 import { Loading } from '@components/Loading';
 
 import { AppRoutes } from './app.routes';
 import { AuthRoutes } from './auth.routes';
+
+// import { TabRoutes } from './tabs.routes';
 
 export const Routes = () => {
   // const [isLoadingUserStorageData, setIsLoadingUserStorageData] = useState(false);

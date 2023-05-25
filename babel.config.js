@@ -24,7 +24,7 @@ module.exports = function (api) {
           '@storage': './src/storage',
           '@services': './src/services',
         }
-      }]
+      }],
     ],
   };
 };

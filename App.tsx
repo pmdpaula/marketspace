@@ -5,6 +5,7 @@ import * as Font from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
 import { NativeBaseProvider } from 'native-base';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 import { useCallback, useEffect, useState } from 'react';
 
@@ -79,14 +80,14 @@ export default function App() {
         translucent
       />
       <AuthContextProvider>
-        <View
+        <GestureHandlerRootView
           onLayout={onLayoutRootView}
           style={{
             flex: 1,
           }}
         >
           <Routes />
-        </View>
+        </GestureHandlerRootView>
       </AuthContextProvider>
     </NativeBaseProvider>
   );

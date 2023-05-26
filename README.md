@@ -188,15 +188,40 @@ yarn add react-native-bouncy-checkbox
 yarn add react-native-mask-text
 ```
 
-[~~~Exibição de imagem em carrousel - react-native-reanimated-carousel~~~](https://github.com/dohooo/react-native-reanimated-carousel)
+[Exibição de imagem em carrousel - react-native-reanimated-carousel](https://github.com/dohooo/react-native-reanimated-carousel)
 Este pacote de carrousel tem como dependência os seguintes (instalação via expo):
  - react-native-gesture-handler
  - react-native-reanimated
 ```bash
-#yarn add react-native-reanimated-carousel
-#npx expo install react-native-gesture-handler
-#npx expo install react-native-reanimated
+yarn add react-native-reanimated-carousel
+npx expo install react-native-gesture-handler
+npx expo install react-native-reanimated
 ```
+Após as instalações acima é necessário fazer as seguintes alterações:
+(comigo o npx não fez automaticamente)
+- incluir o plugin `react-native-reanimated/plugin` no arquivo `babel.config.js`
+- no App.tsx incluir `import { GestureHandlerRootView } from 'react-native-gesture-handler';`
+- Envolver as rotas com o `GestureHandlerRootView`
+no meu caso existia um `View` e alterei para `GestureHandlerRootView`
+
+ex.:
+```javascript
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
+
+...
+      <AuthContextProvider>
+        <GestureHandlerRootView
+          onLayout={onLayoutRootView}
+          style={{
+            flex: 1,
+          }}
+        >
+          <Routes />
+        </GestureHandlerRootView>
+      </AuthContextProvider>
+...
+```
+
 
 [Criação de chaves para objetos JSON - react-native-uuid](https://github.com/eugenehp/react-native-uuid)
 ```bash

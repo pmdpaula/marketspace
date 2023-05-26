@@ -13,28 +13,18 @@ import {
 type ButtonProps = IButtonProps & {
   title: string;
   variant?: 'black' | 'blue' | 'gray';
-  // ButtonIcon?: JSX.Element;
   iconName?: 'plus' | 'whatsapp' | 'left' | 'tag' | 'power' | 'trash' | 'pencil';
 };
 
-export const Button = ({
-  title,
-  variant = 'blue',
-  // ButtonIcon,
-  iconName,
-  ...rest
-}: ButtonProps) => {
+export const Button = ({ title, variant = 'blue', iconName, ...rest }: ButtonProps) => {
   const { colors } = useTheme();
-  // const isIconedButton = ButtonIcon ? true : false;
-  // const ButtonIcon = iconName ? (
-
   let buttonIcon = undefined;
 
   switch (iconName) {
     case 'plus':
       buttonIcon = (
         <Plus
-          color={variant === 'gray' ? colors.gray[700] : colors.gray[100]}
+          color={variant === 'gray' ? colors.gray[700] : colors.gray[50]}
           size={16}
         />
       );
@@ -44,7 +34,7 @@ export const Button = ({
       buttonIcon = (
         <WhatsappLogo
           size={16}
-          color={variant === 'gray' ? colors.gray[700] : colors.gray[100]}
+          color={variant === 'gray' ? colors.gray[700] : colors.gray[50]}
         />
       );
       break;
@@ -53,7 +43,7 @@ export const Button = ({
       buttonIcon = (
         <ArrowLeft
           size={16}
-          color={variant === 'gray' ? colors.gray[700] : colors.gray[100]}
+          color={variant === 'gray' ? colors.gray[700] : colors.gray[50]}
         />
       );
       break;
@@ -62,7 +52,7 @@ export const Button = ({
       buttonIcon = (
         <Tag
           size={16}
-          color={variant === 'gray' ? colors.gray[700] : colors.gray[100]}
+          color={variant === 'gray' ? colors.gray[700] : colors.gray[50]}
         />
       );
       break;
@@ -71,7 +61,7 @@ export const Button = ({
       buttonIcon = (
         <Power
           size={16}
-          color={variant === 'gray' ? colors.gray[700] : colors.gray[100]}
+          color={variant === 'gray' ? colors.gray[700] : colors.gray[50]}
         />
       );
       break;
@@ -80,7 +70,7 @@ export const Button = ({
       buttonIcon = (
         <TrashSimple
           size={16}
-          color={variant === 'gray' ? colors.gray[700] : colors.gray[100]}
+          color={variant === 'gray' ? colors.gray[700] : colors.gray[50]}
         />
       );
       break;
@@ -88,7 +78,7 @@ export const Button = ({
     case 'pencil':
       buttonIcon = (
         <PencilSimpleLine
-          color={variant === 'gray' ? colors.gray[700] : colors.gray[200]}
+          color={variant === 'gray' ? colors.gray[700] : colors.gray[50]}
           size={16}
         />
       );
@@ -101,13 +91,7 @@ export const Button = ({
 
   return (
     <NBButton
-      bg={
-        variant === 'black'
-          ? colors.gray[700]
-          : variant === 'gray'
-          ? 'gray.5'
-          : 'primary.300'
-      }
+      bg={variant === 'black' ? 'gray.1' : variant === 'gray' ? 'gray.5' : 'primary.300'}
       w="full"
       h={11}
       borderColor="primary.400"
@@ -115,9 +99,9 @@ export const Button = ({
       _pressed={{
         bg:
           variant === 'black'
-            ? 'gray.3'
+            ? 'gray.2'
             : variant === 'gray'
-            ? colors.gray[100]
+            ? colors.gray[400]
             : 'primary.200',
       }}
       {...rest}

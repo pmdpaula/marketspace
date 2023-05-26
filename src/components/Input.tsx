@@ -13,12 +13,14 @@ import { useState } from 'react';
 type InputProps = IInputProps & {
   errorMessage?: string | null;
   mode?: 'password' | 'text';
+  isSecretInput?: boolean;
   preText?: string;
 };
 
 export const Input = ({
   errorMessage = null,
   mode = 'text',
+  isSecretInput = false,
   isInvalid,
   preText = '',
   ...rest
@@ -27,6 +29,10 @@ export const Input = ({
   const [show, setShow] = useState(mode === 'text');
 
   const roundedBorderValue = 'md';
+
+  function handleShowHidePassword() {
+    setShow(!show);
+  }
 
   return (
     <FormControl
@@ -37,28 +43,10 @@ export const Input = ({
         w="100%"
         h={11}
         py={0}
-        // alignItems="center"
       >
-        {/* {preText.length > 0 && (
-          <Text
-            bg="gray.7"
-            h={11}
-            // w="8%"
-            roundedLeft={roundedBorderValue}
-            fontSize={16}
-            color="gray.2"
-            fontFamily="body"
-            textAlign={'center'}
-            py={2}
-            px={3}
-          >
-            {preText}
-          </Text>
-        )} */}
         <NBInput
           bg="gray.7"
           h={11}
-          // w="100%"
           px={4}
           borderWidth={0}
           fontSize="md"
@@ -76,6 +64,7 @@ export const Input = ({
             borderColor: 'gray.3',
           }}
           type={show ? 'text' : 'password'}
+          secureTextEntry={isSecretInput && !show}
           InputLeftElement={
             preText.length > 0 ? (
               <Text
@@ -95,19 +84,14 @@ export const Input = ({
             ) : undefined
           }
           InputRightElement={
-            mode === 'password' ? (
+            isSecretInput ? (
               <Pressable
-                onPress={() => setShow(!show)}
+                onPress={handleShowHidePassword}
                 mr={2}
               >
                 <Eye color="#5F5B62" />
               </Pressable>
-            ) : (
-              <Eye
-                color="#F7F7F8"
-                size={1}
-              />
-            )
+            ) : undefined
           }
           {...rest}
         />

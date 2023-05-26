@@ -110,8 +110,8 @@ export const SignIn = () => {
             Acesse sua conta
           </Text>
           <Controller
-            control={control}
             name="email"
+            control={control}
             render={({ field: { onChange, value } }) => (
               <Input
                 value={value}
@@ -127,8 +127,8 @@ export const SignIn = () => {
           />
 
           <Controller
-            control={control}
             name="password"
+            control={control}
             render={({ field: { onChange, value } }) => (
               <Input
                 value={value}
@@ -137,7 +137,7 @@ export const SignIn = () => {
                 isRequired
                 w="100%"
                 mode="password"
-                secureTextEntry
+                isSecretInput
                 errorMessage={errors.password?.message}
                 onSubmitEditing={handleSubmit(handleSignIn)}
                 returnKeyType="send"

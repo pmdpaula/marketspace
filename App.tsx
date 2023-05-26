@@ -9,9 +9,7 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 import { useCallback, useEffect, useState } from 'react';
 
-import { View } from 'react-native';
-
-import { THEME } from './src/theme';
+import { theme } from './src/theme';
 
 // Keep the splash screen visible while we fetch resources
 SplashScreen.preventAutoHideAsync();
@@ -73,7 +71,7 @@ export default function App() {
   }
 
   return (
-    <NativeBaseProvider theme={THEME}>
+    <NativeBaseProvider theme={theme}>
       <StatusBar
         style="dark"
         backgroundColor="transparent"

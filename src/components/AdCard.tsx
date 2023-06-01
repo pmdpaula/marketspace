@@ -1,19 +1,34 @@
-import { ProductDTO } from '@dtos/ProductDTO';
+import { DatabaseProductDTO } from '@dtos/ProductDTO';
+import { useAuth } from '@hooks/useAuth';
 import { useNavigation } from '@react-navigation/native';
 import { AppNavigatorRoutesProps } from '@routes/app.routes';
-import { Badge, Box, HStack, Image, Text, VStack } from 'native-base';
+import api from '@services/api';
+import { Avatar, Badge, HStack, Text, VStack, ZStack } from 'native-base';
 
 import { ImageBackground, Pressable } from 'react-native';
 
+import { AdBadge } from './AdBadge';
+import { AdPrice, AdPriceProps } from './AdPrice';
+
 type AdCardProps = {
-  data: ProductDTO;
+  data: DatabaseProductDTO;
+  priceColor?: AdPriceProps['color'];
 };
 
-export const AdCard = ({ data }: AdCardProps) => {
+export const AdCard = ({ data, priceColor = 'blue' }: AdCardProps) => {
+  const { user } = useAuth();
+
+  const isUserOwner = data.user_id === user.id;
+  const isAdActive = data.is_active === true || data.is_active === undefined;
+
   const { navigate } = useNavigation<AppNavigatorRoutesProps>();
 
-  function goToAdDetails() {
-    navigate('adDetails', { product: data });
+  function handleClickCard() {
+    if (isUserOwner) {
+      navigate('adDetails', { adId: data.id });
+    } else {
+      navigate('adView', { adId: data.id });
+    }
   }
 
   return (
@@ -22,72 +37,76 @@ export const AdCard = ({ data }: AdCardProps) => {
       mb={6}
       w="46%"
     >
-      <Pressable onPress={goToAdDetails}>
-        <Box
+      <Pressable onPress={handleClickCard}>
+        <ZStack
           rounded="md"
           overflow="hidden"
+          h={100}
         >
           <ImageBackground
             source={{
-              uri: 'https://www.guller.com.br/1564-home_default/t%C3%AAnis-vermelho-masculino-esportivo-treinos-casual-fitness-leve-macio-%C3%A1-prova-d%C2%B4%C3%A1gua.jpg',
+              uri: `${api.defaults.baseURL}/images/${data.product_images[0]?.path}`,
             }}
             resizeMode="cover"
           >
             <HStack
-              justifyContent="space-between"
+              justifyContent={isUserOwner ? 'flex-end' : 'space-between'}
               alignItems="flex-start"
               w="100%"
               h={100}
               p={1}
             >
-              <Image
-                source={{ uri: 'https://github.com/pmdpaula.png' }}
-                alt="imagem do vendedor"
-                rounded="full"
-                w={6}
-                h={6}
-                borderWidth={1}
-                borderColor="white"
-              />
+              {!isUserOwner && (
+                <Avatar
+                  source={{ uri: `${api.defaults.baseURL}/images/${data.user.avatar}` }}
+                  rounded="full"
+                  w={6}
+                  h={6}
+                  borderWidth={1}
+                  borderColor="white"
+                />
+              )}
 
-              <Badge
-                rounded="full"
-                // bg="gray.2"
-                py={0.5}
-                px={2}
-                bg={data.is_new ? 'primary.400' : 'gray.2'}
-              >
-                <Text color="white">{data.is_new ? 'NOVO' : 'USADO'}</Text>
-              </Badge>
+              <AdBadge isNew={data.is_new} />
             </HStack>
           </ImageBackground>
-        </Box>
+          {!isAdActive && (
+            <ZStack
+              h={100}
+              w="100%"
+              justifyContent="flex-end"
+              alignItems="flex-start"
+            >
+              <Badge
+                h={100}
+                w="100%"
+                bg="gray.2"
+                opacity={0.5}
+              />
+              <Text
+                fontFamily="heading"
+                color="white"
+                pl={1}
+              >
+                ANÚNCIO DESATIVADO
+              </Text>
+            </ZStack>
+          )}
+        </ZStack>
 
         <Text
           fontFamily="body"
-          color="gray.2"
-          fontSize={14}
+          color={isAdActive ? 'gray.2' : 'gray.4'}
+          fontSize="md"
           mt={1}
         >
           {data.name}
         </Text>
 
-        <Text
-          fontFamily="heading"
-          color="gray.1"
-          fontSize="xs"
-        >
-          R${' '}
-          <Text
-            fontFamily="heading"
-            color="gray.1"
-            fontSize="lg"
-          >
-            {data.price.toLocaleString('pt-BR', {
-              minimumFractionDigits: 2,
-            })}
-          </Text>
-        </Text>
+        <AdPrice
+          price={data.price}
+          color={priceColor}
+        />
       </Pressable>
     </VStack>
   );

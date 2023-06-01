@@ -10,20 +10,20 @@ import { useEffect, useRef, useState } from 'react';
 import { Button } from './Button';
 import { Loading } from './Loading';
 
-type NewAdImageSelectorProps = {
-  // existingAddImages?: ProductImageDTO[];
+type AdImageSelectorProps = {
+  // existingAddImages?: DatabaseProductImageDTO[];
   productId?: string;
-  newAdImages: NewAdImageDTO[];
+  adImages: NewAdImageDTO[];
   addImageIdToBeDeleted?: (imageId: string) => void;
-  setNewAdImages: (imagesObjects: NewAdImageDTO[]) => void;
+  setAdImages: (imagesObjects: NewAdImageDTO[]) => void;
 };
 
-export const NewAdImageSelector = ({
-  newAdImages,
+export const AdImageSelector = ({
+  adImages,
   addImageIdToBeDeleted,
-  setNewAdImages,
-}: NewAdImageSelectorProps) => {
-  // const [newAdImages, setNewAdImages] = useState<NewAdImageDTO[]>([]);
+  setAdImages,
+}: AdImageSelectorProps) => {
+  // const [adImages, setAdImages] = useState<NewAdImageDTO[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isDeleteImageAlertOpen, setIsDeleteImageAlertOpen] = useState(false);
   const [imageUriToBeDeleted, setImageUriToBeDeleted] = useState('');
@@ -33,13 +33,13 @@ export const NewAdImageSelector = ({
   const { user } = useAuth();
 
   // const deleteProductPhotoLocally = async (imageUri: string) => {
-  //   const updatedPhotos = newAdImages.filter((photos) => photos.uri !== imageUri);
-  //   setNewAdImages(updatedPhotos);
+  //   const updatedPhotos = adImages.filter((photos) => photos.uri !== imageUri);
+  //   setAdImages(updatedPhotos);
   //   // setNewAddImages(updatedPhotos);
   // };
 
   // const getPhotoIdFromUri = (imageUri: string) => {
-  //   const photoToBeDeleted = newAdImages.find((image) => image.uri === imageUri);
+  //   const photoToBeDeleted = adImages.find((image) => image.uri === imageUri);
   //   if (!photoToBeDeleted || !photoToBeDeleted.id) return '';
 
   //   return photoToBeDeleted.id;
@@ -71,10 +71,10 @@ export const NewAdImageSelector = ({
   }
 
   async function handleDeleteAdImage() {
-    const newAdImagesFilterred = newAdImages.filter(
+    const adImagesFilterred = adImages.filter(
       (image) => image.uri !== imageUriToBeDeleted,
     );
-    setNewAdImages(newAdImagesFilterred);
+    setAdImages(adImagesFilterred);
     setIsDeleteImageAlertOpen(false);
   }
 
@@ -101,8 +101,8 @@ export const NewAdImageSelector = ({
 
     if (!fileObject) return;
 
-    setNewAdImages([...newAdImages, fileObject]);
-    // setNewAddImages([...newAdImages, photoObject]);
+    setAdImages([...adImages, fileObject]);
+    // setNewAddImages([...adImages, photoObject]);
 
     // if (setUpdatedNewImages && updateNewImages)
     //   setUpdatedNewImages([...updateNewImages, fileObject]);
@@ -111,8 +111,8 @@ export const NewAdImageSelector = ({
   useEffect(() => {
     setIsLoading(true);
 
-    // if (newAdImages.length > 0) {
-    //   const standardImagesOjects = newAdImages.map((image) => {
+    // if (adImages.length > 0) {
+    //   const standardImagesOjects = adImages.map((image) => {
     //     const fileExtension = image.path.split('.').pop();
 
     //     const imageObject = {
@@ -125,24 +125,25 @@ export const NewAdImageSelector = ({
     //     return imageObject;
     //   });
 
-    //   setNewAdImages(standardImagesOjects);
+    //   setAdImages(standardImagesOjects);
     // } else {
-    //   setNewAdImages(newAddImages);
+    //   setAdImages(newAddImages);
     // }
+    // console.log('🚀 ~ file: AdImageSelector.tsx:27 ~ adImages:', adImages);
 
     setIsLoading(false);
   }, []);
 
   // useEffect(() => {
   //   console.log(
-  //     '🚀 ~ file: NewAdImageSelector.tsx ~ line 162 ~ useEffect ~ newAdImages',
-  //     newAdImages,
+  //     '🚀 ~ file: AdImageSelector.tsx ~ line 162 ~ useEffect ~ adImages',
+  //     adImages,
   //   );
   //   console.log(
-  //     '🚀 ~ file: NewAdImageSelector.tsx ~ line 162 ~ useEffect ~ newAdImages.lengt',
-  //     newAdImages.length,
+  //     '🚀 ~ file: AdImageSelector.tsx ~ line 162 ~ useEffect ~ adImages.length',
+  //     adImages.length,
   //   );
-  // }, [newAdImages]);
+  // }, [adImages]);
 
   return isLoading ? (
     <Loading />
@@ -153,8 +154,8 @@ export const NewAdImageSelector = ({
         mt={3}
         mb={6}
       >
-        {newAdImages.length > 0 &&
-          newAdImages.map((photo) => (
+        {adImages.length > 0 &&
+          adImages.map((photo) => (
             <Pressable
               onPress={() => openDeleteImageAlert(photo.uri)}
               key={photo.uri}
@@ -187,7 +188,7 @@ export const NewAdImageSelector = ({
             </Pressable>
           ))}
 
-        {newAdImages.length < 3 && (
+        {adImages.length < 3 && (
           <Pressable
             bgColor="gray.5"
             w={100}

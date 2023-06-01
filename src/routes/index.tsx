@@ -14,7 +14,6 @@ export const Routes = () => {
   // const [isLoadingUserStorageData, setIsLoadingUserStorageData] = useState(false);
   const { colors } = useTheme();
   const { user, isLoadingUserStorageData } = useAuth();
-  // const user = { id: '1' };
 
   const theme = DefaultTheme;
   theme.colors.background = colors.gray[200];

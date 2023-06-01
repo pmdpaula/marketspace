@@ -1,3 +1,4 @@
+import { AdContextProvider } from '@contexts/AdContext';
 import { AuthContextProvider } from '@contexts/AuthContext';
 import { Karla_400Regular, Karla_700Bold } from '@expo-google-fonts/karla';
 import { Routes } from '@routes/index';
@@ -78,14 +79,16 @@ export default function App() {
         translucent
       />
       <AuthContextProvider>
-        <GestureHandlerRootView
-          onLayout={onLayoutRootView}
-          style={{
-            flex: 1,
-          }}
-        >
-          <Routes />
-        </GestureHandlerRootView>
+        <AdContextProvider>
+          <GestureHandlerRootView
+            onLayout={onLayoutRootView}
+            style={{
+              flex: 1,
+            }}
+          >
+            <Routes />
+          </GestureHandlerRootView>
+        </AdContextProvider>
       </AuthContextProvider>
     </NativeBaseProvider>
   );

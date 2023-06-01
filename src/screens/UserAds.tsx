@@ -1,49 +1,51 @@
-import { ProductDTO } from '@dtos/ProductDTO';
-import { useAuth } from '@hooks/useAuth';
-import { useRoute } from '@react-navigation/native';
+import { DatabaseProductDTO } from '@dtos/ProductDTO';
+import { useAd } from '@hooks/useAd';
+import { useFocusEffect } from '@react-navigation/native';
 import { translateFilterActive } from '@utils/translateFilterActive';
-import {
-  CheckIcon,
-  HStack,
-  ScrollView,
-  Select,
-  Spinner,
-  Text,
-  VStack,
-} from 'native-base';
+import { CheckIcon, HStack, ScrollView, Select, Text, VStack } from 'native-base';
 
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 import { AdCard } from '@components/AdCard';
 import { CommomHeader } from '@components/CommomHeader';
-
-// type RouteParamsProps = {
-//   userAds: ProductDTO[];
-// };
-type FilterActiveProps = 'all' | 'active' | 'inactive';
+import { Loading } from '@components/Loading';
 
 export const UserAds = () => {
-  const { userAds, isLoadingUserAds } = useAuth();
+  const { userAds, isLoadingUserAds, fetchUserAdsData } = useAd();
 
-  const [filterActive, setFilterActive] = useState<string>('all');
-  const [adsFiltered, setAdsFiltered] = useState<ProductDTO[]>(userAds);
+  const [filterValue, setFilterValue] = useState<string>('all');
+
+  const [adsFiltered, setAdsFiltered] = useState<DatabaseProductDTO[]>(userAds);
+  const [isFilteringAds, setIsFilteringAds] = useState<boolean>(false);
 
   function handleFilteredAds(filter: string) {
-    if (filterActive === 'all') {
+    setIsFilteringAds(true);
+    setFilterValue(filter);
+
+    if (filter === 'all') {
       setAdsFiltered(userAds);
     } else {
-      const filtered = userAds.filter(
-        (ad) => ad.is_active === (filterActive === 'active'),
-      );
-      setFilterActive(filter);
-      setAdsFiltered(filtered);
+      const filteredAds = userAds.filter((ad) => ad.is_active === (filter === 'active'));
+
+      setAdsFiltered(filteredAds);
     }
+
+    setIsFilteringAds(false);
   }
 
+  useFocusEffect(
+    useCallback(() => {
+      fetchUserAdsData();
+    }, []),
+  );
+
   useEffect(() => {
-    console.log('🚀 ~ file: UserAds.tsx:28 ~ filterActive:', filterActive);
-    // getMyAdsData();
-  }, [filterActive]);
+    fetchUserAdsData();
+  }, []);
+
+  useEffect(() => {
+    setAdsFiltered(userAds);
+  }, [userAds]);
 
   return (
     <ScrollView
@@ -62,13 +64,12 @@ export const UserAds = () => {
 
         {isLoadingUserAds ? (
           <VStack
-            // flex={1}
             h="100%"
             justifyContent="center"
             alignItems="center"
           >
-            <Spinner
-              size={48}
+            <Loading
+              size="lg"
               color="bluelight"
             />
           </VStack>
@@ -84,14 +85,15 @@ export const UserAds = () => {
               <Text>{userAds.length} anúncios</Text>
 
               <Select
-                selectedValue={filterActive}
-                minWidth={100}
+                selectedValue={filterValue}
+                minWidth={140}
                 accessibilityLabel="Filtre por status"
                 placeholder="Filtre por status"
                 _item={{
                   p: 2,
                   fontFamily: 'body',
                   fontSize: 24,
+                  marginBottom: 3,
                 }}
                 fontSize="md"
                 _selectedItem={{
@@ -119,19 +121,25 @@ export const UserAds = () => {
               </Select>
             </HStack>
 
-            <HStack
-              flexWrap="wrap"
-              justifyContent="space-between"
-            >
-              {adsFiltered.map((ad) => {
-                return (
-                  <AdCard
-                    key={ad.id}
-                    data={ad}
-                  />
-                );
-              })}
-            </HStack>
+            {isFilteringAds ? (
+              <Loading />
+            ) : (
+              <HStack
+                flexWrap="wrap"
+                justifyContent="space-between"
+              >
+                {adsFiltered.length > 0 &&
+                  adsFiltered.map((ad) => {
+                    return (
+                      <AdCard
+                        key={ad.id}
+                        data={ad}
+                        priceColor={ad.is_active ? 'black' : 'gray'}
+                      />
+                    );
+                  })}
+              </HStack>
+            )}
           </>
         )}
       </VStack>

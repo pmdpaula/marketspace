@@ -1,10 +1,13 @@
+import { DatabaseProductDTO } from '@dtos/ProductDTO';
 import { AntDesign } from '@expo/vector-icons';
+import { useAd } from '@hooks/useAd';
 import { useNavigation } from '@react-navigation/native';
+import { AppNavigatorRoutesProps } from '@routes/app.routes';
 import { Box, HStack, Icon, IconButton, Text } from 'native-base';
+// eslint-disable-next-line import/no-unresolved
+import { IHStackProps } from 'native-base/lib/typescript/components/primitives/Stack/HStack';
 
-import { Pressable, TouchableOpacity } from 'react-native';
-
-type CommomHeaderProps = {
+type CommomHeaderProps = IHStackProps & {
   title?: string | null;
   showBackButton?: boolean;
   rigthOption?: 'plus' | 'edit' | null;
@@ -14,8 +17,28 @@ export const CommomHeader = ({
   title = null,
   showBackButton = true,
   rigthOption = null,
+  ...rest
 }: CommomHeaderProps) => {
-  const { goBack } = useNavigation();
+  const { goBack, navigate } = useNavigation<AppNavigatorRoutesProps>();
+  const { adSelected, setAdSelected } = useAd();
+
+  function handleRightLink() {
+    if (rigthOption === 'plus') {
+      navigate('adNew');
+    }
+
+    if (rigthOption === 'edit') {
+      navigate('adEdit', { product: adSelected });
+    }
+  }
+
+  function handleBackButton() {
+    if (title?.includes('Criar') || !title) {
+      setAdSelected({} as DatabaseProductDTO);
+    }
+
+    goBack();
+  }
 
   return (
     <HStack
@@ -23,10 +46,9 @@ export const CommomHeader = ({
       h={6}
       justifyContent="space-between"
       alignItems="center"
-      // space={3}
       mb={2}
-      // px={4}
       py={1}
+      {...rest}
     >
       {showBackButton ? (
         <IconButton
@@ -37,9 +59,8 @@ export const CommomHeader = ({
             />
           }
           color="gray.1"
-          onPress={goBack}
+          onPress={handleBackButton}
           size="lg"
-          // bg="cyan.600"
           p={0}
           w="15%"
           justifyContent={'flex-start'}
@@ -48,14 +69,12 @@ export const CommomHeader = ({
         <Box
           w="15%"
           h={6}
-          // bg="cyan.600"
         />
       )}
       <Box
         w="70%"
         h={7}
         textAlign="center"
-        // bg="cyan.200"
         flex={1}
         justifyContent="center"
         alignItems="center"
@@ -78,9 +97,8 @@ export const CommomHeader = ({
             />
           }
           color="gray.1"
-          // onPress={goBack}
+          onPress={handleRightLink}
           size="lg"
-          // bg="cyan.600"
           p={0}
           w="15%"
           justifyContent={'flex-end'}
@@ -89,7 +107,6 @@ export const CommomHeader = ({
         <Box
           w="15%"
           h={6}
-          // bg="cyan.600"
         >
           {' '}
         </Box>

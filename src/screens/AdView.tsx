@@ -1,20 +1,12 @@
 import { DatabaseProductDTO } from '@dtos/ProductDTO';
 import { useAd } from '@hooks/useAd';
 import { useAuth } from '@hooks/useAuth';
-import { useNavigation, useRoute } from '@react-navigation/native';
+import { useRoute } from '@react-navigation/native';
 import api from '@services/api';
 import { AppError } from '@utils/AppError';
-import {
-  AlertDialog,
-  Avatar,
-  HStack,
-  ScrollView,
-  Text,
-  VStack,
-  useToast,
-} from 'native-base';
+import { Avatar, Box, HStack, ScrollView, Text, VStack, useToast } from 'native-base';
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import { AdBadge } from '@components/AdBadge';
 import { AdCarousel } from '@components/AdCarousel';
@@ -28,11 +20,9 @@ type RouteParamsProps = {
   adId?: DatabaseProductDTO['id'];
 };
 
-export const AdDetails = () => {
+export const AdView = () => {
   const { user } = useAuth();
 
-  const [showExcludeAdConfirmation, setShowExcludeAdConfirmation] =
-    useState<boolean>(false);
   const [isLoadingAdData, setIsLoadingAdData] = useState(true);
 
   const route = useRoute();
@@ -40,10 +30,7 @@ export const AdDetails = () => {
 
   const { adSelected, setAdSelected } = useAd();
 
-  const { goBack } = useNavigation();
-
   const toast = useToast();
-  const excludeConfirmationRef = useRef(null);
 
   async function fetchAdDataById(id: DatabaseProductDTO['id']) {
     setIsLoadingAdData(true);
@@ -70,63 +57,13 @@ export const AdDetails = () => {
     }
   }
 
-  function toogleAdActivated() {
-    try {
-      const ad: DatabaseProductDTO = {
-        ...adSelected,
-        is_active: !adSelected.is_active,
-      };
-
-      api.patch(`/products/${ad.id}`, ad);
-
-      setAdSelected(ad);
-    } catch (error) {
-      const isAppError = error instanceof AppError;
-      const title = isAppError
-        ? error.message
-        : 'Erro ao salvar status. Tente novamente mais tarde.';
-
-      toast.show({
-        title,
-        duration: 5000,
-        placement: 'top',
-        bg: 'red.500',
-      });
-    }
-  }
-
-  function handleExcludeAd() {
-    try {
-      api.delete(`/products/${adSelected.id}`);
-
-      setTimeout(() => {
-        goBack();
-        setAdSelected({} as DatabaseProductDTO);
-      }, 500);
-
-      toast.show({
-        title: 'Anúncio excluído com sucesso!',
-        placement: 'top',
-        duration: 3000,
-        bgColor: 'green.500',
-      });
-    } catch (error) {
-      const isAppError = error instanceof AppError;
-      const title = isAppError
-        ? error.message
-        : 'Erro ao excluir anúncio. Tente novamente mais tarde.';
-
-      toast.show({
-        title,
-        duration: 5000,
-        placement: 'top',
-        bg: 'red.500',
-      });
-    }
-  }
-
-  function toogleShowExcludeAdConfirmation() {
-    setShowExcludeAdConfirmation(!showExcludeAdConfirmation);
+  function handleMakeContact() {
+    toast.show({
+      title: 'Entrando em contato com o vendedor...\nRecurso não implementado ainda.',
+      placement: 'top',
+      duration: 2000,
+      bg: 'green.500',
+    });
   }
 
   useEffect(() => {
@@ -137,7 +74,6 @@ export const AdDetails = () => {
     <>
       <CommomHeader
         showBackButton
-        rigthOption={'edit'}
         px={6}
         mb={3}
       />
@@ -167,7 +103,7 @@ export const AdDetails = () => {
                 >
                   <Avatar
                     source={{
-                      uri: `${api.defaults.baseURL}/images/${user.avatar}`,
+                      uri: `${api.defaults.baseURL}/images/${adSelected.user.avatar}`,
                     }}
                     size="sm"
                     bg="primary.400"
@@ -225,69 +161,28 @@ export const AdDetails = () => {
             </VStack>
           </ScrollView>
 
-          <VStack
-            px={6}
-            space={4}
-            mb={6}
+          <HStack
+            w="100%"
+            px={4}
+            py={6}
+            bg="gray.7"
           >
-            <Button
-              title={adSelected.is_active ? 'Desativar anúncio' : 'Reativar anúncio'}
-              variant={adSelected.is_active ? 'black' : 'blue'}
-              iconName="power"
-              onPress={toogleAdActivated}
-            />
+            <Box w="47%">
+              <AdPrice
+                price={adSelected.price}
+                color="blue"
+              />
+            </Box>
 
             <Button
-              title="Excluir anúncio"
-              variant="gray"
-              iconName="trash"
-              onPress={toogleShowExcludeAdConfirmation}
+              title="Entrar em contato"
+              iconName="whatsapp"
+              w="47%"
+              onPress={handleMakeContact}
             />
-          </VStack>
+          </HStack>
         </>
       )}
-
-      <AlertDialog
-        leastDestructiveRef={excludeConfirmationRef}
-        isOpen={showExcludeAdConfirmation}
-        mt={48}
-      >
-        <AlertDialog.Content>
-          <AlertDialog.Header bg="gray.7">
-            Confirma a remoção do anúncio?
-          </AlertDialog.Header>
-
-          <AlertDialog.Footer
-            bg="gray.7"
-            // flex={1}
-            // pt={10}
-            justifyContent="space-between"
-            alignItems="flex-end"
-          >
-            {/* <HStack
-              flex={1}
-              justifyContent="space-between"
-            > */}
-            <Button
-              title="Cancelar"
-              variant="gray"
-              onPress={toogleShowExcludeAdConfirmation}
-              w="45%"
-            >
-              Cancel
-            </Button>
-            <Button
-              title="Excluir"
-              variant="black"
-              w="45%"
-              onPress={handleExcludeAd}
-            >
-              Delete
-            </Button>
-            {/* </HStack> */}
-          </AlertDialog.Footer>
-        </AlertDialog.Content>
-      </AlertDialog>
     </>
   );
 };

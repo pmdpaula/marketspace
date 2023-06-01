@@ -1,5 +1,5 @@
 /* eslint-disable indent */
-import { PaymentMethodsDTO } from '@dtos/PaymentsMethodDTO';
+import { DatabasePaymentMethodsDTO } from '@dtos/ProductDTO';
 import { HStack, Text } from 'native-base';
 import {
   Bank,
@@ -10,17 +10,15 @@ import {
   QrCode,
 } from 'phosphor-react-native';
 
-import { translatePaymentMethod } from './translatePaymentMethod';
-
 type PaymentMethodIconProps = {
-  paymentMethod: PaymentMethodsDTO;
+  paymentMethod: DatabasePaymentMethodsDTO;
 };
 
 export const PaymentMethodIcon = ({ paymentMethod }: PaymentMethodIconProps) => {
   const iconWeight: IconWeight = 'regular';
 
   const IconPM = () => {
-    switch (paymentMethod) {
+    switch (paymentMethod.key) {
       case 'card':
         return (
           <CreditCard
@@ -37,7 +35,7 @@ export const PaymentMethodIcon = ({ paymentMethod }: PaymentMethodIconProps) => 
         );
       case 'cash':
         return (
-          <QrCode
+          <Money
             size={20}
             weight={iconWeight}
           />
@@ -71,14 +69,18 @@ export const PaymentMethodIcon = ({ paymentMethod }: PaymentMethodIconProps) => 
       h={6}
       space={3}
     >
-      <IconPM />
+      {!!paymentMethod.key && (
+        <>
+          <IconPM />
 
-      <Text
-        fontFamily="body"
-        fontWeight={600}
-      >
-        {translatePaymentMethod(paymentMethod)}
-      </Text>
+          <Text
+            fontFamily="body"
+            fontWeight={600}
+          >
+            {paymentMethod.name}
+          </Text>
+        </>
+      )}
     </HStack>
   );
 };

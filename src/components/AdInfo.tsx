@@ -3,9 +3,9 @@
 // import { useUserAds } from '@contexts/userAdsContext';
 // import { NewAdImageDTO } from '@dtos/AdsDTO';
 // import { NewProductAdDTO } from '@dtos/AdsDTO';
-// import { ProductImageDTO, DatabasePaymentOptions } from '@dtos/ProductDTO';
+// import { DatabaseProductImageDTO, DatabasePaymentOptions } from '@dtos/ProductDTO';
 import { NewAdImageDTO, NewAdTO } from '@dtos/NewAdTO';
-import { ProductImageDTO } from '@dtos/ProductDTO';
+import { DatabaseProductImageDTO } from '@dtos/ProductDTO';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useAuth } from '@hooks/useAuth';
 import api from '@services/api';
@@ -67,7 +67,9 @@ const ProductsInfo = ({ adType, children }: Props) => {
   //   return databaseMethods.map((method) => method.key);
   // };
 
-  const setProductImagesToAdsDTOStandard = (databaseImages: ProductImageDTO[]) => {
+  const setProductImagesToAdsDTOStandard = (
+    databaseImages: DatabaseProductImageDTO[],
+  ) => {
     const productImages = databaseImages.map((image) => {
       return {
         name: '',

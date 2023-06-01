@@ -1,23 +1,26 @@
 import { FullNewAdDTO } from '@dtos/NewAdDTO';
-import { ProductDTO } from '@dtos/ProductDTO';
+import { DatabaseProductDTO } from '@dtos/ProductDTO';
 import {
   NativeStackNavigationProp,
   createNativeStackNavigator,
 } from '@react-navigation/native-stack';
 
 import { AdDetails } from '@screens/AdDetails';
-import { NewAd } from '@screens/NewAd';
-import { PreviewNewAd } from '@screens/PreviewNewAd';
+import { AdEdit } from '@screens/AdEdit';
+import { AdNew } from '@screens/AdNew';
+import { AdPreview } from '@screens/AdPreview';
+import { AdView } from '@screens/AdView';
 
 import { TabRoutes } from './tabs.routes';
 
 type AppRoutesProps = {
-  // home: undefined;
-  // myAds: undefined;
   appHome: undefined;
-  newAd: undefined;
-  adDetails: { product: ProductDTO };
-  previewNewAd: { fullNewAd: FullNewAdDTO };
+  adNew: undefined;
+  adEdit: { product: DatabaseProductDTO } | undefined;
+  // adDetails: { product: DatabaseProductDTO };
+  adDetails: { adId: DatabaseProductDTO['id'] };
+  adPreview: { fullAdData: FullNewAdDTO };
+  adView: { adId: DatabaseProductDTO['id'] };
 };
 
 export type AppNavigatorRoutesProps = NativeStackNavigationProp<AppRoutesProps>;
@@ -32,16 +35,24 @@ export const AppRoutes = () => {
         component={TabRoutes}
       />
       <Screen
-        name="newAd"
-        component={NewAd}
+        name="adNew"
+        component={AdNew}
+      />
+      <Screen
+        name="adEdit"
+        component={AdEdit}
       />
       <Screen
         name="adDetails"
         component={AdDetails}
       />
       <Screen
-        name="previewNewAd"
-        component={PreviewNewAd}
+        name="adPreview"
+        component={AdPreview}
+      />
+      <Screen
+        name="adView"
+        component={AdView}
       />
     </Navigator>
   );

@@ -1,41 +1,53 @@
-import { FullNewAdDTO, NewAdDTO } from '@dtos/NewAdDTO';
+import { FullNewAdDTO, NewAdDTO, NewAdImageDTO } from '@dtos/NewAdDTO';
+import { PaymentMethodsDTO } from '@dtos/PaymentsMethodDTO';
+import { DatabaseProductImageDTO } from '@dtos/ProductDTO';
+import { useAd } from '@hooks/useAd';
 import { useAuth } from '@hooks/useAuth';
 import { useNavigation, useRoute } from '@react-navigation/native';
-import { TabNavigatorRoutesProps } from '@routes/tabs.routes';
+import { AppNavigatorRoutesProps } from '@routes/app.routes';
 import api from '@services/api';
 import { AppError } from '@utils/AppError';
-import { PaymentMethodIcon } from '@utils/PaymentMethodIcon';
 import { translateAcceptTrade } from '@utils/translateAcceptTrade';
-import { translateProductCondition } from '@utils/translateProductCondition';
+import { translatePaymentMethod } from '@utils/translatePaymentMethod';
 import {
   Avatar,
-  Badge,
   HStack,
   ScrollView,
   Skeleton,
   Text,
   VStack,
+  ZStack,
   useToast,
 } from 'native-base';
+import uuid from 'react-native-uuid';
 
-// import Carousel from 'react-native-reanimated-carousel';
 import { useEffect, useState } from 'react';
 
+import { AdBadge } from '@components/AdBadge';
+import { AdCarousel } from '@components/AdCarousel';
 import { Button } from '@components/Button';
-import { ImageBox } from '@components/ImageBox';
+import { PaymentMethodIcon } from '@components/PaymentMethodIcon';
 
 type RouteParamsProps = {
-  fullNewAd: FullNewAdDTO;
+  fullAdData: FullNewAdDTO;
 };
 
-export const PreviewNewAd = () => {
+export const AdPreview = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const { user } = useAuth();
+  const { setAdSelected } = useAd();
   const route = useRoute();
-  const { fullNewAd } = route.params as RouteParamsProps;
-  const { goBack, navigate } = useNavigation<TabNavigatorRoutesProps>();
+  const { fullAdData } = route.params as RouteParamsProps;
+  const { goBack, navigate, getState } = useNavigation<AppNavigatorRoutesProps>();
+
   const toast = useToast();
+
+  // const isEditingAd: boolean = routes.forEach(
+  //   (route) => route.name === 'adEdit',
+  const { routes } = getState();
+  const isEditingAd = routes.filter((route) => route.name === 'adEdit').length > 0;
+  // console.log('isEditingAd:', isEditingAd);
 
   function handleBackToEdit() {
     goBack();
@@ -45,15 +57,28 @@ export const PreviewNewAd = () => {
     setIsLoading(true);
 
     try {
-      const response = await api.post('/products', fullNewAd.newAd as NewAdDTO);
-      const { id: newAdId } = response.data;
+      let response = null;
+      // TODO: corrigir erro na edição de anúncio
+      if (isEditingAd) {
+        response = await api.put('/products', fullAdData.newAd as NewAdDTO);
 
-      if (fullNewAd.newAdImages.length > 0) {
+        console.log(
+          '🚀 ~ file: AdPreview.tsx:65 ~ handleCreateAd ~ response:',
+          response.data,
+        );
+      } else {
+        response = await api.post('/products', fullAdData.newAd as NewAdDTO);
+      }
+      // const { id: newAdId } = response.data;
+
+      const { data: createdAd } = await api.get(`/products/${response.data.id}`);
+
+      if (fullAdData.newAdImages.length > 0) {
         const newAdImages = new FormData();
 
-        newAdImages.append('product_id', newAdId);
+        newAdImages.append('product_id', createdAd.id);
 
-        for (const image of fullNewAd.newAdImages) {
+        for (const image of fullAdData.newAdImages) {
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           newAdImages.append('images', image as any);
         }
@@ -79,18 +104,22 @@ export const PreviewNewAd = () => {
         }
       }
 
+      // await fetchUserAdsData();
+      setAdSelected(createdAd);
+
       toast.show({
-        title: 'Anúncio criado com sucesso!',
+        title: isEditingAd
+          ? 'Anúncio editado com sucesso!'
+          : 'Anúncio criado com sucesso!',
         bgColor: 'green.500',
         duration: 5000,
         placement: 'top',
       });
 
-      setIsLoading(false);
-
       setTimeout(() => {
-        navigate('home');
-      }, 3000);
+        setIsLoading(false);
+        navigate('adDetails', { adId: createdAd.id });
+      }, 500);
     } catch (error) {
       const isAppError = error instanceof AppError;
       const title = isAppError
@@ -103,15 +132,57 @@ export const PreviewNewAd = () => {
         placement: 'top',
         bg: 'red.500',
       });
+
+      setTimeout(() => {
+        setIsLoading(false);
+        // navigate('ad', { adId: createdAd.id });
+      }, 500);
     }
   }
 
+  function transformImageListToCarouselList(
+    imageList: NewAdImageDTO[],
+  ): DatabaseProductImageDTO[] {
+    const carouselList = imageList.map((image) => ({
+      id: image.id || String(uuid.v4()),
+      path: image.uri,
+    }));
+
+    return carouselList;
+  }
+
+  function transformPaymentMethodsToDatabaseFormat(
+    newAdPaymentMethods: PaymentMethodsDTO[],
+  ) {
+    const transformedPaymentMethods = newAdPaymentMethods.map((paymentMethod) => ({
+      id: paymentMethod,
+      key: paymentMethod,
+      name: translatePaymentMethod(paymentMethod),
+    }));
+
+    return transformedPaymentMethods;
+  }
+
   useEffect(() => {
-    console.log(
-      '🚀 ~ file: PreviewNewAd.tsx:88 ~ PreviewNewAd ~ fullNewAd.newAdImages:',
-      fullNewAd.newAdImages,
-    );
-  }, [fullNewAd.newAdImages]);
+    // console.log(
+    //   '🚀 ~ file: AdPreview.tsx:88 ~ AdPreview ~ fullAdData.newAdImages:',
+    //   fullAdData.newAdImages,
+    // );
+    console.log('\n\n');
+
+    // console.log('🚀 ~ file: AdPreview.tsx:44 ~ AdPreview ~ getState:');
+    // const { routes } = getState();
+
+    // const filterRoutes = routes.filter((route) => route.name === 'adNew');
+
+    // const respLog = filterRoutes();
+
+    // console.log('🚀 ~ file: AdPreview.tsx:168 ~ useEffect ~ respLog:', filterRoutes);
+
+    console.log('🚀 ~ file: AdPreview.tsx:166 ~ useEffect ~ isEditingAd:', isEditingAd);
+
+    getState().routes.forEach((route) => console.log(route.name));
+  }, []);
 
   return (
     <>
@@ -142,28 +213,45 @@ export const PreviewNewAd = () => {
             </Text>
           </VStack>
 
-          {fullNewAd.newAdImages.length > 0 ? (
-            <ScrollView
-              horizontal
-              showsHorizontalScrollIndicator
-              pr={12}
-              mt={-8}
-              h={280}
-            >
-              {fullNewAd.newAdImages.map((image) => (
-                <ImageBox
-                  key={image.id}
-                  imageData={image}
-                />
-              ))}
-            </ScrollView>
-          ) : (
-            <Skeleton
-              h="280"
-              w="100%"
-              startColor="primary.100"
-              fadeDuration={0.2}
+          {fullAdData.newAdImages.length > 0 ? (
+            // <ScrollView
+            //   horizontal
+            //   showsHorizontalScrollIndicator
+            //   pr={12}
+            //   mt={-8}
+            //   h={280}
+            // >
+            //   {fullAdData.newAdImages.map((image) => (
+            //     <ImageBox
+            //       key={image.id}
+            //       imageData={image}
+            //     />
+            //   ))}
+            // </ScrollView>
+            <AdCarousel
+              images={transformImageListToCarouselList(fullAdData.newAdImages)}
             />
+          ) : (
+            <ZStack
+              h={275}
+              w="100%"
+              justifyContent="center"
+              alignItems="center"
+            >
+              <Skeleton
+                h="100%"
+                w="100%"
+                startColor="primary.100"
+                fadeDuration={0.2}
+              />
+              <Text
+                fontFamily="heading"
+                fontSize="xl"
+                color="gray.4"
+              >
+                Sem Imagem
+              </Text>
+            </ZStack>
           )}
 
           <VStack
@@ -185,26 +273,16 @@ export const PreviewNewAd = () => {
 
               <Text
                 color="gray.1"
-                fontFamily="body"
+                fontFamily="heading"
               >
                 {user.name}
               </Text>
             </HStack>
 
-            <Badge
-              bg="gray.5"
-              rounded="full"
-              maxWidth={100}
+            <AdBadge
+              isNew={fullAdData.newAd.is_new}
               mb={4}
-            >
-              <Text
-                fontFamily="body"
-                fontWeight="600"
-                color="gray.2"
-              >
-                {translateProductCondition(fullNewAd.newAd.is_new)}
-              </Text>
-            </Badge>
+            />
 
             <HStack
               justifyContent={'space-evenly'}
@@ -217,7 +295,7 @@ export const PreviewNewAd = () => {
                 fontSize="lg"
                 w="75%"
               >
-                {fullNewAd.newAd.name}
+                {fullAdData.newAd.name}
               </Text>
 
               <Text
@@ -227,7 +305,7 @@ export const PreviewNewAd = () => {
                 w="25%"
                 textAlign="right"
               >
-                {fullNewAd.newAd.price.toLocaleString('pt-BR', {
+                {fullAdData.newAd.price.toLocaleString('pt-BR', {
                   style: 'currency',
                   currency: 'BRL',
                   currencyDisplay: 'symbol',
@@ -239,7 +317,7 @@ export const PreviewNewAd = () => {
               fontFamily="body"
               mb={4}
             >
-              {fullNewAd.newAd.description}
+              {fullAdData.newAd.description}
             </Text>
 
             <HStack
@@ -254,7 +332,7 @@ export const PreviewNewAd = () => {
               </Text>
 
               <Text fontFamily="body">
-                {translateAcceptTrade(fullNewAd.newAd.accept_trade)}
+                {translateAcceptTrade(fullAdData.newAd.accept_trade)}
               </Text>
             </HStack>
 
@@ -268,9 +346,11 @@ export const PreviewNewAd = () => {
                   Meios de Pagamento:
                 </Text>
 
-                {fullNewAd.newAd.payment_methods.map((paymentMethod) => (
+                {transformPaymentMethodsToDatabaseFormat(
+                  fullAdData.newAd.payment_methods,
+                ).map((paymentMethod) => (
                   <PaymentMethodIcon
-                    key={paymentMethod}
+                    key={paymentMethod.key}
                     paymentMethod={paymentMethod}
                   />
                 ))}

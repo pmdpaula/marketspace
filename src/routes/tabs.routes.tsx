@@ -1,5 +1,5 @@
 // import { ExerciseDTO } from '@dtos/ExerciseDTO';
-import { ProductDTO } from '@dtos/ProductDTO';
+import { DatabaseProductDTO } from '@dtos/ProductDTO';
 import {
   BottomTabNavigationProp,
   createBottomTabNavigator,
@@ -20,7 +20,7 @@ import { UserAds } from '@screens/UserAds';
 
 type TabRoutesProps = {
   home: undefined;
-  userAds: { userAds: ProductDTO[] };
+  userAds: { userAds: DatabaseProductDTO[] };
   signOut: undefined;
 };
 

@@ -1,6 +1,5 @@
 import { FullNewAdDTO, NewAdDTO, NewAdImageDTO } from '@dtos/NewAdDTO';
 import { PaymentMethodsDTO } from '@dtos/PaymentsMethodDTO';
-import { AntDesign } from '@expo/vector-icons';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useNavigation } from '@react-navigation/native';
 import { AppNavigatorRoutesProps } from '@routes/app.routes';
@@ -9,15 +8,12 @@ import {
   Checkbox,
   FormControl,
   HStack,
-  Icon,
-  IconButton,
   Radio,
   ScrollView,
   Switch,
   Text,
   TextArea,
   VStack,
-  useTheme,
   useToast,
 } from 'native-base';
 import { Controller, useForm } from 'react-hook-form';
@@ -26,11 +22,11 @@ import * as yup from 'yup';
 
 import { useRef, useState } from 'react';
 
+import { AdImageSelector } from '@components/AdImageSelector';
 import { Button } from '@components/Button';
 import { CheckBoxInput } from '@components/CheckBoxInput';
 import { CommomHeader } from '@components/CommomHeader';
 import { Input } from '@components/Input';
-import { NewAdImageSelector } from '@components/NewAdImageSelector';
 
 const newAdSchema = yup.object().shape({
   name: yup
@@ -52,7 +48,7 @@ const newAdSchema = yup.object().shape({
     .required('É obrigatório informar os meios de pagamento aceitos'),
 });
 
-export const NewAd = () => {
+export const AdNew = () => {
   const [selectedPaymentMethods, setSelectedPaymentMethods] = useState<
     PaymentMethodsDTO[]
   >([]);
@@ -82,16 +78,6 @@ export const NewAd = () => {
   });
 
   const toast = useToast();
-
-  // function handleSelectPaymentMethod(selectedMethod: PaymentMethodsDTO) {
-  //   if (selectedPaymentMethods.includes(selectedMethod)) {
-  //     setSelectedPaymentMethods(
-  //       selectedPaymentMethods.filter((method) => method !== selectedMethod),
-  //     );
-  //   } else {
-  //     setSelectedPaymentMethods([...selectedPaymentMethods, selectedMethod]);
-  //   }
-  // }
 
   function handleNewAdForm(data: NewAdDTO) {
     if (selectedPaymentMethods.length === 0) {
@@ -135,7 +121,7 @@ export const NewAd = () => {
     //   newAdDataWithImages,
     // );
 
-    navigate('previewNewAd', { fullNewAd: newAdDataWithImages });
+    navigate('adPreview', { fullAdData: newAdDataWithImages });
   }
 
   return (
@@ -187,9 +173,9 @@ export const NewAd = () => {
               rounded="md"
               mb={6}
             /> */}
-            <NewAdImageSelector
-              newAdImages={newAdImages}
-              setNewAdImages={setNewAdImages}
+            <AdImageSelector
+              adImages={newAdImages}
+              setAdImages={setNewAdImages}
             />
 
             <Text

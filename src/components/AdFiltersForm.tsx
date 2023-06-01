@@ -1,3 +1,4 @@
+/* eslint-disable indent */
 import { PaymentMethodsDTO } from '@dtos/PaymentsMethodDTO';
 import { AntDesign } from '@expo/vector-icons';
 import { Badge, Box, HStack, Pressable, Switch, Text, VStack } from 'native-base';
@@ -57,7 +58,7 @@ export const AdFiltersForm = ({
     setShowNew(defaultFiltersValues.showNew);
     setShowUsed(defaultFiltersValues.showUsed);
     setAcceptTrade(defaultFiltersValues.acceptTrade);
-    setSelectedPaymentMethods(['pix', 'card', 'boleto', 'cash', 'deposit']);
+    setSelectedPaymentMethods(defaultFiltersValues.paymentMethods);
   }
 
   function applyFilters() {
@@ -78,31 +79,50 @@ export const AdFiltersForm = ({
   //   console.log('showUsed:', showUsed);
   //   console.log('acceptTrade:', acceptTrade);
   //   console.log('----------------*******************----------------');
-  // }, [selectedPaymentMethods, showNew, showUsed, acceptTrade]);
+  // }, []);
+
+  // useEffect(() => {
+  // console.log('showNewRef: ', showNewRef.current.children[0].props.children[0]);
+  // console.log(showUsedRef);
+  // }, []);
 
   return (
     <>
-      <VStack>
+      <VStack
+        // flex={1}
+        justifyContent="flex-start"
+      >
         <Text
-          size={'sm'}
+          size="sm"
           bold
+          h={6}
+          mb={2}
         >
           Condição
         </Text>
 
-        <HStack mt="-350px">
-          <Pressable onPress={() => setShowNew(!showNew)}>
+        <HStack>
+          <Pressable
+            disabled={!showUsed}
+            onPress={() => setShowNew(!showNew)}
+          >
             <Badge
-              rounded={'full'}
-              bg={showNew ? 'bluelight' : 'gray.5'}
-              textTransform={'uppercase'}
+              rounded="full"
+              bg={
+                showNew && showUsed
+                  ? 'bluelight'
+                  : showNew && !showUsed
+                  ? 'primary.100'
+                  : 'gray.5'
+              }
+              textTransform="uppercase"
               mr={3}
               px={3}
-              flexDirection={'row'}
+              flexDirection="row"
             >
-              <HStack alignItems={'center'}>
+              <HStack alignItems="center">
                 <Text
-                  fontFamily={'heading'}
+                  fontFamily="heading"
                   color={showNew ? 'white' : 'gray.3'}
                 >
                   NOVO
@@ -119,18 +139,28 @@ export const AdFiltersForm = ({
             </Badge>
           </Pressable>
 
-          <Pressable onPress={() => setShowUsed(!showUsed)}>
+          <Pressable
+            disabled={!showNew}
+            onPress={() => setShowUsed(!showUsed)}
+          >
             <Badge
-              rounded={'full'}
-              bg={showUsed ? 'bluelight' : 'gray.5'}
-              textTransform={'uppercase'}
+              rounded="full"
+              // bg={showUsed ? 'bluelight' : 'gray.5'}
+              bg={
+                showNew && showUsed
+                  ? 'bluelight'
+                  : !showNew && showUsed
+                  ? 'primary.100'
+                  : 'gray.5'
+              }
+              textTransform="uppercase"
               mr={3}
               px={3}
-              flexDirection={'row'}
+              flexDirection="row"
             >
-              <HStack alignItems={'center'}>
+              <HStack alignItems="center">
                 <Text
-                  fontFamily={'heading'}
+                  fontFamily="heading"
                   color={showUsed ? 'white' : 'gray.3'}
                 >
                   USADO
@@ -151,10 +181,10 @@ export const AdFiltersForm = ({
 
       <VStack
         mt={8}
-        alignItems={'flex-start'}
+        alignItems="flex-start"
       >
         <Text
-          size={'sm'}
+          size="sm"
           bold
         >
           Aceita troca?
@@ -171,7 +201,7 @@ export const AdFiltersForm = ({
 
       <VStack>
         <Text
-          size={'sm'}
+          size="sm"
           bold
         >
           Meios de pagamentos aceitos
@@ -285,15 +315,15 @@ export const AdFiltersForm = ({
         >
           <Button
             title="Resetar Filtros"
-            variant={'gray'}
+            variant="gray"
             w="48%"
             px={6}
-            onPress={() => handleResetFilters()}
+            onPress={handleResetFilters}
           />
 
           <Button
             title="Aplicar Filtros"
-            variant={'black'}
+            variant="black"
             w="48%"
             px={6}
             onPress={applyFilters}
